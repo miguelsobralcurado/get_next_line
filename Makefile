@@ -3,16 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: msobral- <msobral-@student.42lisboa.com>   +#+  +:+       +#+         #
+#    By: msobral- <msobral-@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/14 16:16:37 by msobral-          #+#    #+#              #
-#    Updated: 2025/11/14 23:51:59 by msobral-         ###   ########.fr        #
+#    Updated: 2025/11/15 12:48:35 by msobral-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SHELL = /bin/sh
 
 SRCS := \
+	test.c \
 	get_next_line.c \
 	get_next_line_utils.c \
 	get_next_line.h
@@ -27,28 +28,68 @@ all: loop clean
 
 loop:
 	clear
-	@echo $$'\\033[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\\033[0m';
+	@printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n';
+	@printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n';
 	@for i in $(LIST); do \
-		printf $$'\\033[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\\033[0m\n'; \
-		printf $$'\\033[36;1mTest >>------> '"$$i"$$':\\033[0m\n'; \
+		printf '\e[36;1mTest >>------> '"$$i"':\e[0m\n'; \
+		sleep 1; \
+		printf '\e[32;1;5mPlease insert the desired BUFFER_SIZE for test '"$$i"': \e[0m'; \
+		read BS; \
 		./spinner.sh & \
 		SPIN_PID=$$!; \
-		printf $$'\\033[32;1;5m  Please insert the desired BUFFER_SIZE for test '"$$i"$$': \\033[0m'; \
-		read BS; \
-		kill $SPIN_PID > /dev/null 2>&1; \
-		printf $$'\\033[33;1mCompiling with BUFFER_SIZE='"$$BS"$$' ...\\033[0m\n'; \
-		gcc $(CFLAGS) -D BUFFER_SIZE=$$BS $(SRCS); \
-		printf $$'\\033[34;1mRunning test '"$$i"$$' ...\\033[0m\n'; \
+		sleep 0.8; \
+		printf '\e[33;1mCompiling with BUFFER_SIZE='"$$BS"' ...\e[0m\n'; \
+		sleep 1.2; \
+		cc $(CFLAGS) -D BUFFER_SIZE=$$BS $(SRCS); \
+		printf '\e[34;1mRunning test '"$$i"' ...\e[0m'; \
+		sleep 1; \
+		kill $$SPIN_PID; \
+		printf "\n"; \
 		./a.out tests/test$$i.txt; \
 		printf "\n"; \
+		printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n'; \
+		./spinner.sh & \
+		SPIN_PID=$$!; \
+		sleep 5; \
+		kill $$SPIN_PID; \
+	done
+
+val:
+	clear
+	@printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n';
+	@printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n';
+	@for i in $(LIST); do \
+		printf '\e[36;1mValgrind Test >>------> '"$$i"':\e[0m\n'; \
+		sleep 1; \
+		printf '\e[32;1;5mPlease insert the desired BUFFER_SIZE for valgrind test '"$$i"': \e[0m'; \
+		read BS; \
+		./spinner.sh & \
+		SPIN_PID=$$!; \
+		sleep 0.8; \
+		printf '\e[33;1mCompiling with BUFFER_SIZE='"$$BS"' ...\e[0m\n'; \
+		sleep 1.2; \
+		cc $(CFLAGS) -D BUFFER_SIZE=$$BS $(SRCS); \
+		printf '\e[34;1mRunning valgrind full leak check test '"$$i"' ...\e[0m'; \
+		sleep 1; \
+		kill $$SPIN_PID; \
+		printf "\n"; \
+		valgrind --leak-check=full --show-leak-kinds=all ./a.out tests/test$$i.txt; \
+		printf "\n"; \
+		printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n'; \
+		./spinner.sh & \
+		SPIN_PID=$$!; \
+		sleep 5; \
+		kill $$SPIN_PID; \
 	done
 
 clean:
-	@rm -f a.out
+	@rm -f a.out get_next_line.h.gch
 
-.PHONY: all clean
+.PHONY: all val clean
 
-#
+# > /dev/null 2>&1
+
+
 #spinner() {
 #    local s='|/-\\'  # Character set for the spinner
 #    while true; do

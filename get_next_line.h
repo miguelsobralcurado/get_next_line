@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msobral- <msobral-@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: msobral- <msobral-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 19:01:56 by msobral-          #+#    #+#             */
-/*   Updated: 2025/11/14 16:11:44 by msobral-         ###   ########.fr       */
+/*   Updated: 2025/11/15 14:29:06 by msobral-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ typedef struct	new_line
 char	*get_next_line(int fd);
 
 // utils
-void	free_null(char *s);
+void	free_null(char **s);
 void	ft_bzero(void *s, size_t n);
 void	*ft_memset(void *s, int c, size_t n);
 void	*ft_memcpy(void *dest, const void *src, size_t n);

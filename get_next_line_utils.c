@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msobral- <msobral-@student.42lisboa.com>   +#+  +:+       +#+        */
+/*   By: msobral- <msobral-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 18:57:58 by msobral-          #+#    #+#             */
-/*   Updated: 2025/11/13 23:36:41 by msobral-         ###   ########.fr       */
+/*   Updated: 2025/11/15 13:43:19 by msobral-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	free_null(char *s)
+void	free_null(char **s)
 {
-	free(s);
-	s = NULL;
+	free(*s);
+	*s = NULL;
 }
 
 void	ft_bzero(void *s, size_t n)
