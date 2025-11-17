@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: msobral- <msobral-@student.42lisboa.com    +#+  +:+       +#+         #
+#    By: msobral- <msobral-@student.42lisboa.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/14 16:16:37 by msobral-          #+#    #+#              #
-#    Updated: 2025/11/15 12:48:35 by msobral-         ###   ########.fr        #
+#    Updated: 2025/11/17 12:51:42 by msobral-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,16 +43,23 @@ loop:
 		cc $(CFLAGS) -D BUFFER_SIZE=$$BS $(SRCS); \
 		printf '\e[34;1mRunning test '"$$i"' ...\e[0m'; \
 		sleep 1; \
-		kill $$SPIN_PID; \
+		kill $$SPIN_PID > /dev/null 2>&1 & \
+		wait $$SPIN_PID 2>/dev/null; \
 		printf "\n"; \
 		./a.out tests/test$$i.txt; \
 		printf "\n"; \
 		printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n'; \
-		./spinner.sh & \
-		SPIN_PID=$$!; \
+		if [ "$$i" < 5 ]; then \
+			./spinner.sh & \
+			SPIN_PID=$$!; \
+		fi; \
 		sleep 5; \
-		kill $$SPIN_PID; \
+		if [ "$$i" < 5 ]; then \
+			kill $$SPIN_PID > /dev/null 2>&1; \
+			wait $$SPIN_PID 2>/dev/null; \
+		fi; \
 	done
+	@rm -f *ch;
 
 val:
 	clear
@@ -71,7 +78,8 @@ val:
 		cc $(CFLAGS) -D BUFFER_SIZE=$$BS $(SRCS); \
 		printf '\e[34;1mRunning valgrind full leak check test '"$$i"' ...\e[0m'; \
 		sleep 1; \
-		kill $$SPIN_PID; \
+		kill $$SPIN_PID > /dev/null 2>&1 & \
+		wait $$SPIN_PID 2>/dev/null; \
 		printf "\n"; \
 		valgrind --leak-check=full --show-leak-kinds=all ./a.out tests/test$$i.txt; \
 		printf "\n"; \
@@ -79,23 +87,45 @@ val:
 		./spinner.sh & \
 		SPIN_PID=$$!; \
 		sleep 5; \
-		kill $$SPIN_PID; \
+		kill $$SPIN_PID > /dev/null 2>&1 & \
+		wait $$SPIN_PID 2>/dev/null; \
 	done
+	@rm -f *ch;
+
+xcode:
+	clear
+	@printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n';
+	@printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n';
+	@for i in $(LIST); do \
+		printf '\e[36;1mXcode Leaks Test >>------> '"$$i"':\e[0m\n'; \
+		sleep 1; \
+		printf '\e[32;1;5mPlease insert the desired BUFFER_SIZE for leaks test '"$$i"': \e[0m'; \
+		read BS; \
+		./spinner.sh & \
+		SPIN_PID=$$!; \
+		sleep 0.8; \
+		printf '\e[33;1mCompiling with BUFFER_SIZE='"$$BS"' ...\e[0m\n'; \
+		sleep 1.2; \
+		cc $(CFLAGS) -D BUFFER_SIZE=$$BS $(SRCS); \
+		printf '\e[34;1mRunning Xcode at exit leaks test '"$$i"' ...\e[0m'; \
+		sleep 1; \
+		kill $$SPIN_PID > /dev/null 2>&1 & \
+		wait $$SPIN_PID 2>/dev/null; \
+		printf "\n"; \
+		leaks --atExit -- ./a.out tests/test$$i.txt; \
+		printf "\n"; \
+		printf '\e[35;1m-~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~-\e[0m\n'; \
+		./spinner.sh & \
+		SPIN_PID=$$!; \
+		sleep 5; \
+		kill $$SPIN_PID > /dev/null 2>&1 & \
+		wait $$SPIN_PID 2>/dev/null; \
+	done
+	@rm -f *ch;
 
 clean:
-	@rm -f a.out get_next_line.h.gch
+	@rm -f a.out *ch
 
-.PHONY: all val clean
+.PHONY: all val xcode clean
 
 # > /dev/null 2>&1
-
-
-#spinner() {
-#    local s='|/-\\'  # Character set for the spinner
-#    while true; do
-#        for ((i=0; i<${#s}; i++)); do
-#            printf "\r\033[33m%s\033[0m" "${s:i:1}"  # Print one character
-#            sleep 0.1
-#        done
-#    done
-#}
