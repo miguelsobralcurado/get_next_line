@@ -1,7 +1,0 @@
-Hi everyone, this is the test file nº 1
-This test file is called test.txt
-It serves the purpose of starting to test having a file as input for C.
-It serves as both a tester to the open() and read() functions but also as a first try on our get_next_line function.
-So far this test is going quite well.
-In fact if you reach this point,
-You won!
